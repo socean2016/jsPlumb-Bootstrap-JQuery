@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+    <head>
+        <title>jsPlumb - state machine demonstration</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+        <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="jsplumbtoolkit-defaults.css">
+        <link rel="stylesheet" href="jsplumbtoolkit-demo.css">
+        <link rel="stylesheet" href="demo.css">
+    </head>
+    <body data-demo-id="statemachine">
+<div id="string" style="display:none;">[[{"BlockId":"opened","BlockContent":"opened","BlockX":110,"BlockY":55,"data":{"url":"www.jd.com","describe":"第一个页面","owner":"liuwei","isSelfUpdate":true}},{"BlockId":"phone1","BlockContent":"phone1","BlockX":385,"BlockY":132,"data":{"url":"www.jd.com","describe":"第er个页面","owner":"liuwei","isSelfUpdate":true}},{"BlockId":"phone2","BlockContent":"phone2","BlockX":308,"BlockY":264,"data":{"url":"www.jd.com","describe":"第三个页面","owner":"liuwei","isSelfUpdate":true}},{"BlockId":"inperson","BlockContent":"inperso","BlockX":132,"BlockY":253,"data":{"url":"www.jd.com","describe":"第四个页面","owner":"liuwei","isSelfUpdate":true}},{"BlockId":"rejected","BlockContent":"rejecte","BlockX":110,"BlockY":385,"data":{"url":"www.jd.com","describe":"第四个页面","owner":"liuwei","isSelfUpdate":false}}],[{"source":"opened","target":"phone1","data":{"a":"t1","b":"t2"},"type":"basic"},{"source":"phone1","target":"opened","data":{"a":"t3","b":"t4"},"type":"basic"},{"source":"phone1","target":"inperson","data":{"a":"t5","b":"t6"},"type":"basic"},{"source":"phone2","target":"rejected","data":{"a":"t7","b":"t8"},"type":"basic"}]]</div>        
+        <div class="jtk-demo-main">
+            <!-- demo -->
+            <div class="jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan" id="canvas">
+                <div>
+                    <button id="addNode">增加</button>
+                </div>
+                
+            </div>
+            <!-- /demo -->
+            
+        </div>
+        <button id="saveNode">生成</button>
+        <textarea name="" id="outputText" style="width:100%; height:200px; margin-bottom:100px;"></textarea>
+        
+        <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdn.bootcss.com/jquery-mousewheel/3.1.13/jquery.mousewheel.js"></script>
+        <!-- JS -->
+        <script src="jsplumb.js"></script>
+        <!-- /JS -->
+        
+        <!--  demo code -->
+        <script src="demo.js"></script>
+
+
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">编辑节点</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="url">URL</label>
+                                <input type="text" class="form-control" id="url" placeholder="请输入url">
+                            </div>
+                            <div class="form-group">
+                                <label for="describe">describe描述</label>
+                                <input type="text" class="form-control" id="describe" placeholder="请输入描述">
+                            </div>
+                            <div class="form-group">
+                                <label for="owner">owner所属二级域名</label>
+                                <input type="text" class="form-control" id="owner" placeholder="请输入二级域名">
+                            </div>
+                            
+                            <div class="checkbox">
+                                <label>
+                                <input id="isSelfUpdate" type="checkbox">页面是否需要单独请求接口
+                                </label>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="deleteBlock" class="btn btn-primary" data-dismiss="modal">删除节点</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button type="button" id="editBlock" data-dismiss="modal" class="btn btn-primary">提交更改</button>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        <div class="modal fade" id="editConnectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-2" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel-2">编辑页面间关系</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form">
+                            <div id="conditionForm">
+
+                            </div>
+                            <!-- <div class="form-group">
+                                <label for="name">跳转条件a</label>
+                                <input type="text" id="conditionA" class="form-control" value="" placeholder="请输入">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">跳转条件b</label>
+                                <input type="text" id="conditionB" class="form-control" value="" placeholder="请输入">
+                            </div> -->
+                            
+                            
+                            <div class="modal-footer">
+                                <button type="button" id="deleteConnect" class="btn btn-primary" data-dismiss="modal">删除关系</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button type="submit" id="submitConnect" data-dismiss="modal" class="btn btn-primary">提交更改</button>
+                            </div>
+                            </form>
+                    </div>
+                    
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        <div class="modal fade" id="addConnectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-3" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel-3">添加页面间关系</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form">
+                            <div id="addConditionForm">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="addKey" class="btn btn-default">增加键值对</button>
+                                <button type="submit" id="addConnect" data-dismiss="modal" class="btn btn-primary">提交更改</button>
+                            </div>
+                            </form>
+                    </div>
+                    
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </body>
+</html>
